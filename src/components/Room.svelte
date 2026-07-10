@@ -85,7 +85,7 @@
       class="h-full overflow-y-auto py-2"
       bind:this={scroller}
       onscroll={handleScroll}
-      data-testid="message-list"
+      data-testid="chat-log"
     >
       {#if mainMessages.length === 0}
         <p class="text-center text-mist text-sm mt-10">
