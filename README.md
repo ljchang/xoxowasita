@@ -5,8 +5,9 @@ scans a QR code, types a name (no account), and comments / emoji-reacts /
 threads while she talks. Everything persists so the reactions can be plotted
 on her "thank you" slide.
 
-**Live:** https://wasita-defense-chat.web.app
-**QR (slide-ready):** `qr/defense-chat-qr.png` / `.svg`
+**Live:** https://xoxowasita.com (custom domain; https://wasita-defense-chat.web.app
+always works as the underlying Hosting URL, and www.xoxowasita.com redirects
+to the bare domain)
 
 Built in the style of Wasita's own chat apps (cosanlab/shared-reality-chat):
 Svelte 5 + Vite + Tailwind v4, serverless — the browser talks straight to
@@ -58,9 +59,25 @@ npm run build && npx firebase deploy   # hosting + database rules
 
 1. **Before the talk:** `./scripts/reset_chat.sh` to wipe test chatter
    (export first if you want it: `./scripts/export_chat.sh`).
-2. Put `qr/defense-chat-qr.png` on the intro slide, tell people to scan.
+2. Put **xoxowasita.com** on the intro slide.
 3. **After:** `./scripts/export_chat.sh` → one JSON with every message,
    author, timestamp (ms epoch), thread parent, and reaction — ready for the
    thank-you-slide plot. Both scripts authenticate via your `gcloud` login.
 
 Design + plan docs: `docs/superpowers/`.
+
+## Custom domain (xoxowasita.com)
+
+Both domains are registered with Firebase Hosting (done via the REST API).
+For them to go live, these DNS records must exist at the domain registrar:
+
+| Type  | Host              | Value                           |
+|-------|-------------------|---------------------------------|
+| TXT   | xoxowasita.com    | `hosting-site=wasita-defense-chat` |
+| A     | xoxowasita.com    | `199.36.158.100`                |
+| CNAME | www.xoxowasita.com | `wasita-defense-chat.web.app`  |
+
+(Firebase also suggests TXT `v=spf1 -all` — optional; it just tells mail
+servers this domain never sends email.) TLS certificates provision
+automatically once DNS propagates; check status under Firebase console →
+Hosting → custom domains.
