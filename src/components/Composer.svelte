@@ -6,13 +6,22 @@
 
   let text = $state('')
   let typingTimer
+  let lastPing = 0
 
-  // Wasita's convention (shared-reality-chat): ping "typing" on every
-  // keystroke, clear it 500 ms after the last one.
+  // Slack-like feel: the indicator lingers 3 s after the last keystroke
+  // instead of vanishing instantly. Writes are throttled to one refresh per
+  // 1.5 s so an audience of typers doesn't hammer the database per keystroke.
   function handleInput() {
-    setTyping(scope, identity, true)
+    const now = Date.now()
+    if (now - lastPing > 1500) {
+      lastPing = now
+      setTyping(scope, identity, true)
+    }
     clearTimeout(typingTimer)
-    typingTimer = setTimeout(() => setTyping(scope, identity, false), 500)
+    typingTimer = setTimeout(() => {
+      lastPing = 0
+      setTyping(scope, identity, false)
+    }, 3000)
   }
 
   function submit(e) {
@@ -22,6 +31,7 @@
     onSend(clean)
     text = ''
     clearTimeout(typingTimer)
+    lastPing = 0 // so typing again right after a send re-pings immediately
     setTyping(scope, identity, false)
   }
 </script>

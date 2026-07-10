@@ -16,8 +16,8 @@ This is that platform — built the way she would have built it. Wasita writes
 serverless real-time chat apps in Svelte on Firebase
 ([shared-reality-chat](https://github.com/cosanlab/shared-reality-chat),
 [survivor-chat](https://github.com/cosanlab/survivor-chat)), so her defense
-chat is one too: same stack, same message-bubble design language, same 500 ms
-typing-indicator debounce, her violet/fuchsia/pink palette in dark mode, and
+chat is one too: same stack, same message-bubble design language, same
+typing-indicator wiring, her violet/fuchsia/pink palette in dark mode, and
 the wordmark set in Monas, the display face from her personal site.
 
 ## Screenshots
