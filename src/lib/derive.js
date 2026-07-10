@@ -36,3 +36,11 @@ export function groupReactions(raw, selfClientId) {
     mine: selfClientId in reactors,
   }))
 }
+
+// Slack-style grouping: hide the name/time header when the previous message
+// is from the same author within 5 minutes.
+export function sameGroup(prev, msg) {
+  if (!prev || prev.name !== msg.name) return false
+  if (!prev.ts || !msg.ts) return false
+  return msg.ts - prev.ts < 5 * 60_000
+}

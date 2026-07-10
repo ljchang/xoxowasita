@@ -19,6 +19,19 @@
   --color-accent-hot: #d946ef; /* fuchsia-500 */
   --color-blush: #f472b6; /* pink-400 */
   --color-petal: #f9a8d4; /* light pink — decoration only */
+  --color-card: #151022; /* chat column, slightly raised off the page bg */
+}
+
+/* Touch screens have no hover: keep the message action icons visible */
+@media (hover: none) {
+  .msg-actions {
+    display: flex !important;
+  }
+}
+
+html {
+  /* bigger type overall — her shared-reality-chat bumps the root size too */
+  font-size: 17px;
 }
 
 html,

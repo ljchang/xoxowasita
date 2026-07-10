@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { topLevel, replies, replyCounts, typingLabel, groupReactions } from './derive.js'
+import { topLevel, replies, replyCounts, typingLabel, groupReactions, sameGroup } from './derive.js'
 
 const msg = (id, ts, parentId = null) => ({ id, ts, parentId, name: 'n', text: 't' })
 
@@ -51,5 +51,18 @@ describe('groupReactions', () => {
   })
   it('handles missing input', () => {
     expect(groupReactions(null, 'me')).toEqual([])
+  })
+})
+
+describe('sameGroup', () => {
+  const m = (name, ts) => ({ name, ts })
+  it('groups same author within 5 minutes', () => {
+    expect(sameGroup(m('A', 1000), m('A', 2000))).toBe(true)
+  })
+  it('breaks on author change, long gaps, or pending timestamps', () => {
+    expect(sameGroup(m('A', 1000), m('B', 2000))).toBe(false)
+    expect(sameGroup(m('A', 0), m('A', 400_000))).toBe(false)
+    expect(sameGroup(m('A', 1000), m('A', null))).toBe(false)
+    expect(sameGroup(undefined, m('A', 1000))).toBe(false)
   })
 })

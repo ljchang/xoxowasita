@@ -24,42 +24,15 @@
     clearTimeout(typingTimer)
     setTyping(scope, identity, false)
   }
-
-  const quickEmoji = ['💜', '😂', '👏', '🔥', '😮', '🎉', '🐙', '🦄']
-  let showEmoji = $state(false)
 </script>
 
+<!-- No emoji button: phones have native emoji keyboards, macOS has ⌃⌘Space.
+     Reactions get their own picker from each message's hover actions. -->
 <form
   onsubmit={submit}
   class="px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1"
 >
-  {#if showEmoji}
-    <div class="flex gap-1 pb-2 justify-around">
-      {#each quickEmoji as e (e)}
-        <button
-          type="button"
-          class="text-2xl p-1 rounded-lg hover:bg-surface-2 active:scale-125 transition"
-          onclick={() => {
-            text += e
-            handleInput()
-          }}
-        >
-          {e}
-        </button>
-      {/each}
-    </div>
-  {/if}
   <div class="flex items-end gap-2">
-    <button
-      type="button"
-      aria-label="Emoji"
-      class="shrink-0 h-11 w-11 rounded-xl bg-surface text-xl active:scale-95 transition {showEmoji
-        ? 'ring-2 ring-accent'
-        : ''}"
-      onclick={() => (showEmoji = !showEmoji)}
-    >
-      😊
-    </button>
     <input
       class="min-w-0 flex-1 h-11 rounded-xl bg-surface border border-surface-2 px-4 placeholder:text-mist/60 focus:outline-none focus:ring-2 focus:ring-accent"
       {placeholder}

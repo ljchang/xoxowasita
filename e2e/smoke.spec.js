@@ -33,12 +33,14 @@ test('two users chat, react, thread, and see typing', async ({ browser }) => {
   const bubbleOnB = b.locator('[data-testid^="message-"]', { hasText: msgText }).first()
   const bubbleOnA = a.locator('[data-testid^="message-"]', { hasText: msgText }).first()
 
-  // B reacts 💜 → A sees the chip with count 1
+  // B reacts 💜 → A sees the chip with count 1 (actions appear on hover)
+  await bubbleOnB.hover()
   await bubbleOnB.getByTestId('add-reaction').click()
   await bubbleOnB.getByTestId('pick-💜').click()
   await expect(bubbleOnA.getByTestId('reaction-chip-💜')).toContainText('1')
 
   // B replies in thread → A sees the reply count
+  await bubbleOnB.hover()
   await bubbleOnB.locator('[data-testid^="open-thread-"]').click()
   const panel = b.getByTestId('thread-panel')
   await expect(panel).toBeVisible()
@@ -46,7 +48,7 @@ test('two users chat, react, thread, and see typing', async ({ browser }) => {
   await panel.getByTestId('send-button').click()
   await expect(panel.getByText(replyText)).toBeVisible()
   await b.getByTestId('close-thread').click()
-  await expect(bubbleOnA.locator('[data-testid^="open-thread-"]')).toContainText('1 reply')
+  await expect(bubbleOnA.locator('[data-testid^="thread-count-"]')).toContainText('1 reply')
 
   // A types → B sees the typing indicator with A's name
   await a.getByTestId('composer-input').pressSequentially('thinking…', { delay: 80 })
