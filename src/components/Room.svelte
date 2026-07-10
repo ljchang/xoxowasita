@@ -97,15 +97,24 @@
     pinned = true
   }
 
-  // svelte action: close the roster when tapping anywhere outside it
+  // svelte action: close the roster on outside tap or Escape
   function closeOnOutsidePointer(node) {
-    const handle = (e) => {
+    const onPointer = (e) => {
       if (!node.contains(e.target) && !e.target.closest('[data-testid="roster-toggle"]')) {
         showRoster = false
       }
     }
-    document.addEventListener('pointerdown', handle, true)
-    return { destroy: () => document.removeEventListener('pointerdown', handle, true) }
+    const onKey = (e) => {
+      if (e.key === 'Escape') showRoster = false
+    }
+    document.addEventListener('pointerdown', onPointer, true)
+    window.addEventListener('keydown', onKey)
+    return {
+      destroy: () => {
+        document.removeEventListener('pointerdown', onPointer, true)
+        window.removeEventListener('keydown', onKey)
+      },
+    }
   }
 
   function sendMain(text) {
@@ -139,7 +148,6 @@
         </button>
       </p>
       {#if showRoster}
-        <svelte:window onkeydown={(e) => e.key === 'Escape' && (showRoster = false)} />
         <div
           class="absolute right-3 top-full mt-1 z-40 min-w-44 max-h-72 overflow-y-auto rounded-xl bg-surface-2 shadow-xl ring-1 ring-white/10 py-1"
           data-testid="roster"
