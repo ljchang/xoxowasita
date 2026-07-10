@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Wasita's palette (from shared-reality-chat), dark-mode remix */
+  --color-night: #0f0a1a; /* app background: near-black violet */
+  --color-surface: #1b1230; /* cards, composer, thread panel */
+  --color-surface-2: #251a40; /* hover / raised surfaces */
+  --color-mist: #b4a8cc; /* muted text on dark */
+  --color-own: #6366f1; /* indigo-500 — own message bubble */
+  --color-other: #e879f9; /* fuchsia-400 — others' bubbles */
+  --color-accent: #8b5cf6; /* violet-500 */
+  --color-accent-hot: #d946ef; /* fuchsia-500 */
+  --color-blush: #f472b6; /* pink-400 */
+  --color-petal: #f9a8d4; /* light pink — decoration only */
+}
+
+html,
+body {
+  height: 100%;
+  overscroll-behavior-y: none;
+  background: var(--color-night);
+  color: #f3eefc;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Noto Color Emoji',
+    sans-serif;
+}
+
+/* Wasita's typing-dots bounce (TypingIndicator.svelte) */
+@keyframes dot-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-0.25rem);
+    opacity: 1;
+  }
+}
