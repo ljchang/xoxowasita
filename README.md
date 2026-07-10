@@ -31,6 +31,9 @@ the wordmark set in Monas, the display face from her personal site.
 - **Zero-friction join** — name only, kept in `localStorage`; refresh doesn't re-prompt
 - **Slack-style threads** — reply counts on parents, slide-over thread panel
 - **Emoji reactions** — tap to toggle; counts update live for everyone
+- **:emoji: autocomplete** — Slack-style, ~150 names; typing a full `:name:` converts inline
+- **@mentions** — autocomplete from who's in the room; being mentioned highlights the row
+- **Shift+Enter** for multi-line messages; Enter sends
 - **Typing indicators** — "Sarah is typing…" / "3 people are typing…" with
   bouncing dots, scoped per room *and* per thread
 - **Feels instant** — optimistic sends, streamed `child_added` updates, pinned

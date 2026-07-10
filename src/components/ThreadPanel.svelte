@@ -6,7 +6,7 @@
   import { replies, typingLabel, groupReactions, sameGroup } from '../lib/derive.js'
   import { isOwnMessage } from '../lib/identity.js'
 
-  let { identity, parent, messages, reactionsRaw, onToggleReaction, onClose } = $props()
+  let { identity, parent, messages, reactionsRaw, knownNames = [], onToggleReaction, onClose } = $props()
 
   let threadReplies = $derived(replies(messages, parent.id))
 
@@ -60,6 +60,8 @@
       message={parent}
       mine={isOwnMessage(parent.id)}
       reactions={groupReactions(reactionsRaw[parent.id], identity.clientId)}
+      {knownNames}
+      selfName={identity.name}
       onToggleReaction={(id, emoji) => onToggleReaction(id, emoji)}
     />
     <div class="mx-4 my-2 flex items-center gap-2 text-xs text-mist/60">
@@ -74,11 +76,19 @@
         mine={isOwnMessage(m.id)}
         showMeta={!sameGroup(threadReplies[i - 1], m)}
         reactions={groupReactions(reactionsRaw[m.id], identity.clientId)}
+        {knownNames}
+        selfName={identity.name}
         onToggleReaction={(id, emoji) => onToggleReaction(id, emoji)}
       />
     {/each}
   </div>
 
   <TypingDots {label} />
-  <Composer {identity} scope={parent.id} placeholder="Reply in thread…" onSend={send} />
+  <Composer
+    {identity}
+    scope={parent.id}
+    placeholder="Reply in thread…"
+    onSend={send}
+    mentionNames={knownNames}
+  />
 </div>

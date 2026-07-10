@@ -3,6 +3,7 @@
   import EmojiPicker from './EmojiPicker.svelte'
   import { shortTime } from '../lib/time.js'
   import { linkify } from '../lib/derive.js'
+  import { tokenizeMentions } from '../lib/mentions.js'
 
   let {
     message,
@@ -10,6 +11,8 @@
     reactions = [],
     replyCount = 0,
     showMeta = true, // false when grouped under the previous message (same author, close in time)
+    knownNames = [],
+    selfName = '',
     onToggleReaction,
     onOpenThread = null,
   } = $props()
@@ -18,6 +21,14 @@
   let pending = $derived(!message.ts)
   let showPicker = $state(false)
 
+  // Slack-style "you were mentioned" row treatment
+  let mentionsMe = $derived(
+    selfName !== '' &&
+      tokenizeMentions(message.text, knownNames).some(
+        (p) => p.mention?.toLowerCase() === selfName.toLowerCase(),
+      ),
+  )
+
   function pick(emoji) {
     showPicker = false
     onToggleReaction(message.id, emoji)
@@ -25,7 +36,8 @@
 </script>
 
 <div
-  class="group relative px-4 {showMeta ? 'pt-2' : 'pt-0.5'} pb-0.5 rounded-lg hover:bg-white/[0.02]"
+  class="group relative px-4 {showMeta ? 'pt-2' : 'pt-0.5'} pb-0.5 hover:bg-white/[0.02]
+    {mentionsMe ? 'bg-blush/10 border-l-2 border-blush rounded-r-lg' : 'rounded-lg'}"
   data-testid="message-{message.id}"
 >
   {#if showMeta}
@@ -51,7 +63,17 @@
             rel="noopener noreferrer"
             class="underline decoration-current/60 hover:decoration-current break-all"
           >{part.url}</a>
-        {:else}{part.text}{/if}
+        {:else}
+          {#each tokenizeMentions(part.text, knownNames) as piece, j (j)}
+            {#if piece.mention}
+              <span
+                class="font-bold rounded px-1 {piece.mention.toLowerCase() === selfName.toLowerCase()
+                  ? 'bg-white/90 text-[#6d28d9]'
+                  : mine ? 'bg-white/25' : 'bg-[#3b0764]/15'}"
+              >@{piece.mention}</span>
+            {:else}{piece.text}{/if}
+          {/each}
+        {/if}
       {/each}
     </div>
   </div>

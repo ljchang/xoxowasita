@@ -54,6 +54,12 @@ test('two users chat, react, thread, and see typing', async ({ browser }) => {
   await a.getByTestId('composer-input').pressSequentially('thinking…', { delay: 80 })
   await expect(b.getByText(`${nameA} is typing`)).toBeVisible()
 
+  // :emoji: autocomplete — ':fir' suggests 🔥, Enter inserts it
+  await a.getByTestId('composer-input').pressSequentially(' :fir', { delay: 40 })
+  await expect(a.getByTestId('suggest-fire')).toBeVisible()
+  await a.keyboard.press('Enter')
+  await expect(a.getByTestId('composer-input')).toHaveValue('thinking… 🔥')
+
   await ctxA.close()
   await ctxB.close()
 })

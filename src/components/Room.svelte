@@ -25,6 +25,7 @@
   let connected = $state(true)
 
   let hereCount = $state(0)
+  let presentNames = $state([])
 
   $effect(() => onMessages((m) => messages.push(m)))
   $effect(() => onReactions((r) => (reactionsRaw = r)))
@@ -32,8 +33,14 @@
   $effect(() => onConnected((c) => (connected = c)))
   $effect(() => {
     joinPresence(identity)
-    return onPresence((n) => (hereCount = n))
+    return onPresence((p) => {
+      hereCount = p.count
+      presentNames = p.names
+    })
   })
+
+  // everyone mentionable: currently present + anyone who has posted
+  let knownNames = $derived([...new Set([...presentNames, ...messages.map((m) => m.name)])])
 
   let mainMessages = $derived(topLevel(messages))
   let counts = $derived(replyCounts(messages))
@@ -126,6 +133,8 @@
             showMeta={!sameGroup(mainMessages[i - 1], m)}
             reactions={groupReactions(reactionsRaw[m.id], identity.clientId)}
             replyCount={counts.get(m.id) ?? 0}
+            {knownNames}
+            selfName={identity.name}
             onToggleReaction={handleToggleReaction}
             onOpenThread={(id) => (openThreadId = id)}
           />
@@ -143,7 +152,7 @@
     </div>
 
     <TypingDots {label} />
-    <Composer {identity} scope="main" onSend={sendMain} autofocus />
+    <Composer {identity} scope="main" onSend={sendMain} autofocus mentionNames={knownNames} />
   </main>
 </div>
 
@@ -153,6 +162,7 @@
     parent={openParent}
     {messages}
     {reactionsRaw}
+    {knownNames}
     onToggleReaction={handleToggleReaction}
     onClose={() => (openThreadId = null)}
   />

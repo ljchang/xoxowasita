@@ -72,7 +72,11 @@ export function joinPresence({ clientId, name }) {
 }
 
 export function onPresence(cb) {
-  return onValue(ref(db, 'presence'), (snap) => cb(Object.keys(snap.val() ?? {}).length))
+  return onValue(ref(db, 'presence'), (snap) => {
+    const val = snap.val() ?? {}
+    const entries = Object.values(val)
+    cb({ count: entries.length, names: entries.map((e) => e.name).filter(Boolean) })
+  })
 }
 
 // --- connection state -------------------------------------------------------
