@@ -97,6 +97,17 @@
     pinned = true
   }
 
+  // svelte action: close the roster when tapping anywhere outside it
+  function closeOnOutsidePointer(node) {
+    const handle = (e) => {
+      if (!node.contains(e.target) && !e.target.closest('[data-testid="roster-toggle"]')) {
+        showRoster = false
+      }
+    }
+    document.addEventListener('pointerdown', handle, true)
+    return { destroy: () => document.removeEventListener('pointerdown', handle, true) }
+  }
+
   function sendMain(text) {
     sendMessage({ name: identity.name, text })
     jumpToLatest() // your own message always brings you back to the bottom
@@ -128,9 +139,11 @@
         </button>
       </p>
       {#if showRoster}
+        <svelte:window onkeydown={(e) => e.key === 'Escape' && (showRoster = false)} />
         <div
           class="absolute right-3 top-full mt-1 z-40 min-w-44 max-h-72 overflow-y-auto rounded-xl bg-surface-2 shadow-xl ring-1 ring-white/10 py-1"
           data-testid="roster"
+          use:closeOnOutsidePointer
         >
           {#each roster as name, i (i)}
             <div class="px-3 py-1 text-sm {name === identity.name ? 'text-white' : 'text-mist'}">
