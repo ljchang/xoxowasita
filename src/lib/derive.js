@@ -44,3 +44,19 @@ export function sameGroup(prev, msg) {
   if (!prev.ts || !msg.ts) return false
   return msg.ts - prev.ts < 5 * 60_000
 }
+
+// Split message text into plain-text and URL parts so links render clickable.
+// Svelte escapes the text parts, so this stays XSS-safe.
+export function linkify(text) {
+  const parts = []
+  const re = /https?:\/\/[^\s<>"']+/g
+  let last = 0
+  let m
+  while ((m = re.exec(text))) {
+    if (m.index > last) parts.push({ text: text.slice(last, m.index) })
+    parts.push({ url: m[0] })
+    last = m.index + m[0].length
+  }
+  if (last < text.length) parts.push({ text: text.slice(last) })
+  return parts
+}

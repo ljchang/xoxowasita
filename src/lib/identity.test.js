@@ -35,3 +35,14 @@ describe('identity', () => {
     expect(getIdentity().name).toHaveLength(30)
   })
 })
+
+describe('own messages', () => {
+  beforeEach(() => _setStorage(memoryStorage()))
+  it('remembers ids across calls', async () => {
+    const { rememberOwnMessage, isOwnMessage } = await import('./identity.js')
+    expect(isOwnMessage('m1')).toBe(false)
+    rememberOwnMessage('m1')
+    expect(isOwnMessage('m1')).toBe(true)
+    expect(isOwnMessage('m2')).toBe(false)
+  })
+})

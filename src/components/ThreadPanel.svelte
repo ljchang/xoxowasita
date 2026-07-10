@@ -4,6 +4,7 @@
   import TypingDots from './TypingDots.svelte'
   import { sendMessage, onTyping } from '../lib/chat.js'
   import { replies, typingLabel, groupReactions, sameGroup } from '../lib/derive.js'
+  import { isOwnMessage } from '../lib/identity.js'
 
   let { identity, parent, messages, reactionsRaw, onToggleReaction, onClose } = $props()
 
@@ -57,7 +58,7 @@
   <div class="flex-1 overflow-y-auto py-2">
     <MessageBubble
       message={parent}
-      mine={parent.name === identity.name}
+      mine={isOwnMessage(parent.id)}
       reactions={groupReactions(reactionsRaw[parent.id], identity.clientId)}
       onToggleReaction={(id, emoji) => onToggleReaction(id, emoji)}
     />
@@ -70,7 +71,7 @@
     {#each threadReplies as m, i (m.id)}
       <MessageBubble
         message={m}
-        mine={m.name === identity.name}
+        mine={isOwnMessage(m.id)}
         showMeta={!sameGroup(threadReplies[i - 1], m)}
         reactions={groupReactions(reactionsRaw[m.id], identity.clientId)}
         onToggleReaction={(id, emoji) => onToggleReaction(id, emoji)}

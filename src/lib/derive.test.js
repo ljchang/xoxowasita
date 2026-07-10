@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { topLevel, replies, replyCounts, typingLabel, groupReactions, sameGroup } from './derive.js'
+import { topLevel, replies, replyCounts, typingLabel, groupReactions, sameGroup, linkify } from './derive.js'
 
 const msg = (id, ts, parentId = null) => ({ id, ts, parentId, name: 'n', text: 't' })
 
@@ -64,5 +64,26 @@ describe('sameGroup', () => {
     expect(sameGroup(m('A', 0), m('A', 400_000))).toBe(false)
     expect(sameGroup(m('A', 1000), m('A', null))).toBe(false)
     expect(sameGroup(undefined, m('A', 1000))).toBe(false)
+  })
+})
+
+describe('linkify', () => {
+  it('passes plain text through as one part', () => {
+    expect(linkify('hello world')).toEqual([{ text: 'hello world' }])
+  })
+  it('extracts urls with surrounding text', () => {
+    expect(linkify('see https://a.com/x?y=1 now')).toEqual([
+      { text: 'see ' },
+      { url: 'https://a.com/x?y=1' },
+      { text: ' now' },
+    ])
+  })
+  it('handles a bare url and multiple urls', () => {
+    expect(linkify('https://a.com')).toEqual([{ url: 'https://a.com' }])
+    expect(linkify('https://a.com and http://b.org')).toEqual([
+      { url: 'https://a.com' },
+      { text: ' and ' },
+      { url: 'http://b.org' },
+    ])
   })
 })

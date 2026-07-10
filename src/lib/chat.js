@@ -9,6 +9,7 @@ import {
   serverTimestamp,
 } from 'firebase/database'
 import { db } from './firebase.js'
+import { rememberOwnMessage } from './identity.js'
 
 export const TEXT_MAX = 500
 
@@ -19,7 +20,9 @@ export function sendMessage({ name, text, parentId = null }) {
   if (!clean) return null
   const msg = { name, text: clean, ts: serverTimestamp() }
   if (parentId) msg.parentId = parentId
-  return push(ref(db, 'messages'), msg)
+  const r = push(ref(db, 'messages'), msg)
+  rememberOwnMessage(r.key) // push ids are known synchronously
+  return r
 }
 
 // Streams every message (existing + new) as {id, name, text, ts, parentId}.
@@ -58,6 +61,18 @@ export function onTyping(scope, cb) {
     const val = snap.val() ?? {}
     cb(Object.entries(val).map(([clientId, v]) => ({ clientId, name: v.name, ts: v.ts })))
   })
+}
+
+// --- presence (live audience count) ------------------------------------------
+
+export function joinPresence({ clientId, name }) {
+  const node = ref(db, `presence/${clientId}`)
+  onDisconnect(node).remove()
+  return set(node, { name, ts: serverTimestamp() })
+}
+
+export function onPresence(cb) {
+  return onValue(ref(db, 'presence'), (snap) => cb(Object.keys(snap.val() ?? {}).length))
 }
 
 // --- connection state -------------------------------------------------------

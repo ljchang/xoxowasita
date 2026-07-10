@@ -11,8 +11,11 @@
     onTyping,
     onConnected,
     toggleReaction,
+    joinPresence,
+    onPresence,
   } from '../lib/chat.js'
   import { topLevel, replyCounts, typingLabel, groupReactions, sameGroup } from '../lib/derive.js'
+  import { isOwnMessage } from '../lib/identity.js'
 
   let { identity } = $props()
 
@@ -21,10 +24,16 @@
   let typing = $state([])
   let connected = $state(true)
 
+  let hereCount = $state(0)
+
   $effect(() => onMessages((m) => messages.push(m)))
   $effect(() => onReactions((r) => (reactionsRaw = r)))
   $effect(() => onTyping('main', (entries) => (typing = entries)))
   $effect(() => onConnected((c) => (connected = c)))
+  $effect(() => {
+    joinPresence(identity)
+    return onPresence((n) => (hereCount = n))
+  })
 
   let mainMessages = $derived(topLevel(messages))
   let counts = $derived(replyCounts(messages))
@@ -92,6 +101,9 @@
       <p class="text-xs text-mist flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full {connected ? 'bg-emerald-400' : 'bg-amber-400'}"></span>
         {connected ? `chatting as ${identity.name}` : 'reconnecting…'}
+        {#if hereCount > 1}
+          <span class="text-petal/80">· 💜 {hereCount} here</span>
+        {/if}
       </p>
     </header>
 
@@ -110,7 +122,7 @@
         {#each mainMessages as m, i (m.id)}
           <MessageBubble
             message={m}
-            mine={m.name === identity.name}
+            mine={isOwnMessage(m.id)}
             showMeta={!sameGroup(mainMessages[i - 1], m)}
             reactions={groupReactions(reactionsRaw[m.id], identity.clientId)}
             replyCount={counts.get(m.id) ?? 0}
@@ -131,7 +143,7 @@
     </div>
 
     <TypingDots {label} />
-    <Composer {identity} scope="main" onSend={sendMain} />
+    <Composer {identity} scope="main" onSend={sendMain} autofocus />
   </main>
 </div>
 

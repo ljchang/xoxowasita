@@ -5,6 +5,9 @@
   let identity = $state(getIdentity())
   let draft = $state('')
   let joinError = $state('')
+  let nameInput = $state(null)
+
+  $effect(() => nameInput?.focus())
 
   function join(e) {
     e.preventDefault()
@@ -36,6 +39,7 @@
           placeholder="Your name"
           maxlength={NAME_MAX}
           bind:value={draft}
+          bind:this={nameInput}
           autocomplete="name"
           data-testid="name-input"
         />

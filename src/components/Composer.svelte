@@ -2,9 +2,16 @@
   import { setTyping } from '../lib/chat.js'
   import { TEXT_MAX } from '../lib/chat.js'
 
-  let { identity, scope, placeholder = 'Say something nice…', onSend } = $props()
+  let { identity, scope, placeholder = 'Say something nice…', onSend, autofocus = false } = $props()
 
   let text = $state('')
+  let inputEl = $state(null)
+
+  // Focus the composer on desktop only — on phones this would pop the
+  // keyboard over half the screen before the reader has seen the room.
+  $effect(() => {
+    if (autofocus && matchMedia('(hover: hover)').matches) inputEl?.focus()
+  })
   let typingTimer
   let lastPing = 0
 
@@ -48,6 +55,7 @@
       {placeholder}
       maxlength={TEXT_MAX}
       bind:value={text}
+      bind:this={inputEl}
       oninput={handleInput}
       enterkeyhint="send"
       data-testid="composer-input"

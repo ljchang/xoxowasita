@@ -11,6 +11,36 @@ let storage = typeof localStorage !== 'undefined' ? localStorage : null
 // test seam: swap the backing store (node has no localStorage)
 export function _setStorage(s) {
   storage = s
+  ownCache = null
+}
+
+// --- own-message tracking ----------------------------------------------------
+// The message schema is locked (append-only rules, no clientId field), so
+// "is this bubble mine?" is answered locally: remember the push-ids we sent.
+// Name equality would false-positive on two audience members named Sarah.
+
+const OWN_KEY = 'defense-chat:ownMessages'
+let ownCache = null
+
+function ownIds() {
+  if (!ownCache) {
+    try {
+      ownCache = new Set(JSON.parse(storage.getItem(OWN_KEY) ?? '[]'))
+    } catch {
+      ownCache = new Set()
+    }
+  }
+  return ownCache
+}
+
+export function rememberOwnMessage(id) {
+  const ids = ownIds()
+  ids.add(id)
+  storage.setItem(OWN_KEY, JSON.stringify([...ids].slice(-500)))
+}
+
+export function isOwnMessage(id) {
+  return ownIds().has(id)
 }
 
 function randomId() {

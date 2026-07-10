@@ -23,6 +23,15 @@
         }
       }
     },
+    "presence": {
+      "$clientId": {
+        ".write": true,
+        ".validate": "newData.hasChildren(['name','ts'])",
+        "name": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+        "ts": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
     "typing": {
       "$scope": {
         "$clientId": {

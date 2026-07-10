@@ -50,6 +50,19 @@ body {
     sans-serif;
 }
 
+/* reaction chips pop in — reactions are the heartbeat of the room */
+@keyframes chip-pop {
+  0% {
+    transform: scale(0.5);
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* Wasita's typing-dots bounce (TypingIndicator.svelte) */
 @keyframes dot-bounce {
   0%,

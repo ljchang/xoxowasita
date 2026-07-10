@@ -2,6 +2,7 @@
   import ReactionBar from './ReactionBar.svelte'
   import EmojiPicker from './EmojiPicker.svelte'
   import { shortTime } from '../lib/time.js'
+  import { linkify } from '../lib/derive.js'
 
   let {
     message,
@@ -42,7 +43,16 @@
         ? 'ml-10 bg-own rounded-tl-xl rounded-tr-xl rounded-bl-xl'
         : 'mr-10 bg-other text-[#3b0764] rounded-tl-xl rounded-tr-xl rounded-br-xl'}"
     >
-      {message.text}
+      {#each linkify(message.text) as part, i (i)}
+        {#if part.url}
+          <a
+            href={part.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline decoration-current/60 hover:decoration-current break-all"
+          >{part.url}</a>
+        {:else}{part.text}{/if}
+      {/each}
     </div>
   </div>
 
