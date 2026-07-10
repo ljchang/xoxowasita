@@ -10,7 +10,7 @@ read -r -p "Really delete ALL chat data from $DB? [y/N] " ans
 [[ "$ans" == "y" || "$ans" == "Y" ]] || { echo "aborted"; exit 1; }
 
 TOKEN=$(gcloud auth print-access-token)
-for path in messages reactions typing; do
+for path in messages reactions typing presence; do
   curl -sf -X DELETE "$DB/$path.json?access_token=$TOKEN" > /dev/null
   echo "cleared /$path"
 done
