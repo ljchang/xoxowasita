@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+/* Monas — the header face from wasita.space, for the "xoxo wasita" wordmark */
+@font-face {
+  font-family: 'Monas';
+  src: url('/fonts/monas.woff2') format('woff2');
+  font-display: swap;
+}
+
 @theme {
   /* Wasita's palette (from shared-reality-chat), dark-mode remix */
   --color-night: #0f0a1a; /* app background: near-black violet */

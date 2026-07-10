@@ -69,10 +69,8 @@
 
 <main class="flex flex-col h-dvh max-w-xl mx-auto">
   <header class="px-4 py-2.5 bg-surface shadow-md">
-    <h1
-      class="text-sm font-bold bg-gradient-to-r from-accent via-other to-blush bg-clip-text text-transparent"
-    >
-      Wasita's Public Dissertation Defense Commentary
+    <h1 class="text-xl leading-6 text-accent" style="font-family: 'Monas', 'American Typewriter', serif">
+      xoxo wasita
     </h1>
     <p class="text-xs text-mist flex items-center gap-1.5">
       <span class="w-1.5 h-1.5 rounded-full {connected ? 'bg-emerald-400' : 'bg-amber-400'}"></span>

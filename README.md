@@ -1,6 +1,6 @@
-# Wasita's Public Dissertation Defense Commentary
+# xoxo wasita
 
-Real-time audience chat for Wasita's public dissertation defense. The audience
+"Wasita's Public Dissertation Defense Commentary" — real-time audience chat for Wasita's public dissertation defense. The audience
 scans a QR code, types a name (no account), and comments / emoji-reacts /
 threads while she talks. Everything persists so the reactions can be plotted
 on her "thank you" slide.
