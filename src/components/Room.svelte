@@ -42,6 +42,14 @@
   // everyone mentionable: currently present + anyone who has posted
   let knownNames = $derived([...new Set([...presentNames, ...messages.map((m) => m.name)])])
 
+  // who's-here roster: self first, then A→Z (dupes = same person, two tabs)
+  let showRoster = $state(false)
+  let roster = $derived(
+    [...presentNames].sort((a, b) =>
+      a === identity.name ? -1 : b === identity.name ? 1 : a.localeCompare(b),
+    ),
+  )
+
   let mainMessages = $derived(topLevel(messages))
   let counts = $derived(replyCounts(messages))
   let label = $derived(typingLabel(typing, identity.clientId))
@@ -101,17 +109,36 @@
   <main
     class="flex flex-col h-full max-w-xl mx-auto bg-card sm:rounded-2xl sm:ring-1 sm:ring-white/10 sm:shadow-2xl sm:shadow-accent/10 overflow-hidden"
   >
-    <header class="px-4 py-2.5 bg-surface border-b border-white/5">
+    <header class="relative px-4 py-2.5 bg-surface border-b border-white/5">
       <h1 class="text-xl leading-6 text-accent" style="font-family: 'Monas', 'American Typewriter', serif">
         xoxo wasita
       </h1>
       <p class="text-xs text-mist flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full {connected ? 'bg-emerald-400' : 'bg-amber-400'}"></span>
         {connected ? `chatting as ${identity.name}` : 'reconnecting…'}
-        {#if hereCount > 1}
-          <span class="text-petal/80">· 💜 {hereCount} here</span>
-        {/if}
+        <button
+          type="button"
+          class="text-petal/80 hover:text-petal transition rounded px-1 {showRoster
+            ? 'bg-surface-2 text-petal'
+            : ''}"
+          data-testid="roster-toggle"
+          onclick={() => (showRoster = !showRoster)}
+        >
+          · 💜 {hereCount} here
+        </button>
       </p>
+      {#if showRoster}
+        <div
+          class="absolute right-3 top-full mt-1 z-40 min-w-44 max-h-72 overflow-y-auto rounded-xl bg-surface-2 shadow-xl ring-1 ring-white/10 py-1"
+          data-testid="roster"
+        >
+          {#each roster as name, i (i)}
+            <div class="px-3 py-1 text-sm {name === identity.name ? 'text-white' : 'text-mist'}">
+              {name}{name === identity.name ? ' (you)' : ''}
+            </div>
+          {/each}
+        </div>
+      {/if}
     </header>
 
     <div class="relative flex-1 min-h-0">
